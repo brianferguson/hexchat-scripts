@@ -2,12 +2,12 @@
         Name: open-tabs.lua
       Author: Brian Ferguson
      Website: https://github.com/brianferguson/hexchat-scripts/
-        Date: 2020.07.27
-     Version: 1.0
+        Date: 2021.05.19
+     Version: 1.1
      License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/
  Description: This opens certain tabs when connecting to a server and joining a channel
-    Platform: Hexchat 2.14.3 
-     Network: freenode#rainmeter (brian)
+    Platform: Hexchat 2.14.3
+     Network: freenode#rainmeter (brian), Libera.Chat#rainmeter (_brian)
 ]]
 
 --[[
@@ -17,11 +17,11 @@
   forward server and user notices to 2 separates tabs "(snotices)" and "(notices)" respectively.
   I then like to have a private window open before the main channel opens.
   To achieve this, this script opens tabs on connection to the server and on joining a channel.
-  For me, the tab order is: freenode, (snotices), (notices), jsmorley, #rainmeter
+  For me, the tab order is: [server], (snotices), (notices), jsmorley, #rainmeter
 ]]
 
 local script_name = "open-tabs.lua"
-local script_version = "1.0"
+local script_version = "1.1"
 local script_description = "Automatically opens tabs once logged on"
 
 hexchat.register(script_name, script_version, script_description)

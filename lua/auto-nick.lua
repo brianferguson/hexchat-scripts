@@ -2,16 +2,16 @@
         Name: auto-nick.lua
       Author: Brian Ferguson
      Website: https://github.com/brianferguson/hexchat-scripts/
-        Date: 2020.07.27
-     Version: 1.0
+        Date: 2021.05.19
+     Version: 1.1
      License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/
  Description: This regains your preferred nick when logging onto a server.
     Platform: Hexchat 2.14.3
-     Network: freenode#rainmeter (brian)
+     Network: freenode#rainmeter (brian), Libera.Chat#rainmeter (_brian)
 ]]
 
 local script_name = "auto-nick.lua"
-local script_version = "1.0"
+local script_version = "1.1"
 local script_description = "Automatically regains your preferred nick"
 
 hexchat.register(script_name, script_version, script_description)
@@ -25,13 +25,8 @@ local function on_join_autonick(word, eol)
 			5: client (":http://webchat.freenode.net") or "real name"
 	]]
 
-	local curr_nick = hexchat.get_info("nick")
-	local pref_nick = hexchat.prefs["irc_nick1"]
-
 	-- Debug
 --[[
-	hexchat.print("Current nick: " .. curr_nick)
-	hexchat.print("Preferred nick: " .. pref_nick)
 	hexchat.print("word[1]: " .. word[1])
 	hexchat.print("word[2]: " .. word[2])
 	hexchat.print("word[3]: " .. word[3])
@@ -40,22 +35,51 @@ local function on_join_autonick(word, eol)
 	hexchat.print("eol[1]: " .. eol[1])
 ]]
 
-	if hexchat.nickcmp(word[4], pref_nick) == 0 then
+	local server = hexchat.get_info("server")
+	if server == nil then
+--		hexchat.print("Server Error 1: Cannot get server name")
+		return hexchat.EAT_NONE
+	end
+
+	local accounts = {
+		  freenode = { user = "brian"    , nick = "brian" },
+		  libera =   { user = "bferguson", nick = "_brian"}
+	}
+
+	local user_name = nil
+	local pref_nick = nil
+
+	for k,v in pairs(accounts) do
+		if server:find(k) then
+			user_name = v["user"]
+			pref_nick = v["nick"]
+			break
+		end
+	end
+
+	if user_name == nil or pref_nick == nil then
+--		hexchat.print("Server Debug 1: Could not find account information")
+		return hexchat.EAT_NONE
+	end
+
+--[[
+	The "JOIN" command is executed for every person that joins a channel.
+	The following code only need to be executed for "you", so compare
+	the "joined" nick with your own preferred nick.
+]]
+	local curr_nick = hexchat.get_info("nick")
+
+	if hexchat.nickcmp(word[4], user_name) == 0 then
 		if hexchat.nickcmp(curr_nick, pref_nick) ~= 0 then
 --			hexchat.print("Debug: current nick not equal to preferred nick.")
-			local server = hexchat.get_info("server")
-			if server then
---				hexchat.print("Debug: server name is: " .. server)
-				local server_context = hexchat.find_context(server, nil)
-				if server_context then
---					hexchat.print("Debug: server context found: " .. server)
-					server_context:command("msg nickserv regain " .. pref_nick)
-					server_context:print(script_name .. ": " .. curr_nick .. " to " .. pref_nick)
-				else
---					hexchat.print("Error 2: cannot get server context for server: " .. server)
-				end
+--			hexchat.print("Debug: server name is: " .. server)
+			local server_context = hexchat.find_context(server, nil)
+			if server_context then
+--				hexchat.print("Debug: server context found: " .. server)
+				server_context:command("msg nickserv regain " .. pref_nick)
+				server_context:print(script_name .. ": " .. curr_nick .. " to " .. pref_nick)
 			else
---				hexchat.print("Error 1: cannot get server name.")
+--				hexchat.print("Server Error 2: Cannot get server context for server: " .. server)
 			end
 		end
 	end
