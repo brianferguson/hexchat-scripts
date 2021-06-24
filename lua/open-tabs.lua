@@ -2,12 +2,12 @@
         Name: open-tabs.lua
       Author: Brian Ferguson
      Website: https://github.com/brianferguson/hexchat-scripts/
-        Date: 2021.05.19
-     Version: 1.1
+        Date: 2021.06.24
+     Version: 1.2
      License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/
  Description: This opens certain tabs when connecting to a server and joining a channel
     Platform: Hexchat 2.14.3
-     Network: freenode#rainmeter (brian), Libera.Chat#rainmeter (_brian)
+     Network: freenode#rainmeter (brian), Libera.Chat#rainmeter (brian)
 ]]
 
 --[[
@@ -21,7 +21,7 @@
 ]]
 
 local script_name = "open-tabs.lua"
-local script_version = "1.1"
+local script_version = "1.2"
 local script_description = "Automatically opens tabs once logged on"
 
 hexchat.register(script_name, script_version, script_description)
@@ -63,8 +63,10 @@ local function on_join_opentab(word, eol)
 	
 end
 
--- https://irc.com/foundation/docs/refs/numerics/376
-hexchat.hook_server("376", on_connect_opentab, hexchat.PRI_HIGHEST)
+-- Hook message "003": 'This server was created {Date}'
+-- This message is usually sent once
+-- https://defs.ircdocs.horse/defs/numerics.html#rpl-created-003
+hexchat.hook_server("003", on_connect_opentab, hexchat.PRI_HIGHEST)
 hexchat.hook_server("JOIN", on_join_opentab, hexchat.PRI_HIGHEST)
 
 hexchat.print("* " .. script_name .. ":" .. script_version .. " is loaded.")

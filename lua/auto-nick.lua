@@ -2,12 +2,12 @@
         Name: auto-nick.lua
       Author: Brian Ferguson
      Website: https://github.com/brianferguson/hexchat-scripts/
-        Date: 2021.05.19
+        Date: 2021.06.24
      Version: 1.1
      License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/
  Description: This regains your preferred nick when logging onto a server.
     Platform: Hexchat 2.14.3
-     Network: freenode#rainmeter (brian), Libera.Chat#rainmeter (_brian)
+     Network: freenode#rainmeter (brian), Libera.Chat#rainmeter (brian)
 ]]
 
 local script_name = "auto-nick.lua"
