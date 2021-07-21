@@ -2,8 +2,8 @@
         Name: auto-nick.lua
       Author: Brian Ferguson
      Website: https://github.com/brianferguson/hexchat-scripts/
-        Date: 2021.06.24
-     Version: 1.1
+        Date: 2021.07.21
+     Version: 1.2
      License: CC BY-NC-SA 4.0  https://creativecommons.org/licenses/by-nc-sa/4.0/
  Description: This regains your preferred nick when logging onto a server.
     Platform: Hexchat 2.14.3
@@ -42,17 +42,21 @@ local function on_join_autonick(word, eol)
 	end
 
 	local accounts = {
-		  freenode = { user = "brian"    , nick = "brian" },
-		  libera =   { user = "bferguson", nick = "_brian"}
+		  freenode = { user = "brian", nick = "brian", command_1 = "recover", redo_nick = true  },
+		  libera =   { user = "brian", nick = "brian", command_1 = "regain",  redo_nick = false }
 	}
 
 	local user_name = nil
 	local pref_nick = nil
+	local command_1 = nil
+	local redo_nick = false
 
 	for k,v in pairs(accounts) do
 		if server:find(k) then
 			user_name = v["user"]
 			pref_nick = v["nick"]
+			command_1 = v["command_1"]
+			redo_nick = v["redo_nick"]
 			break
 		end
 	end
@@ -76,7 +80,15 @@ local function on_join_autonick(word, eol)
 			local server_context = hexchat.find_context(server, nil)
 			if server_context then
 --				hexchat.print("Debug: server context found: " .. server)
-				server_context:command("msg nickserv regain " .. pref_nick)
+
+--				Perform "command_1"
+				server_context:command("msg nickserv " .. command_1 .. " " .. pref_nick)
+
+--				Switch to preffered nick
+				if redo_nick then
+					server_context:command("nick " .. pref_nick)
+				end
+
 				server_context:print(script_name .. ": " .. curr_nick .. " to " .. pref_nick)
 			else
 --				hexchat.print("Server Error 2: Cannot get server context for server: " .. server)
